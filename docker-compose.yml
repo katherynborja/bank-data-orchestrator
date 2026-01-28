@@ -1,0 +1,28 @@
+services:
+  backend:
+    build: ./server
+    container_name: bank-orchestrator-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - EXTERNAL_API_URL=https://jsonplaceholder.typicode.com/users
+      - JWT_SECRET=super_secret_key_prod_2026
+    networks:
+      - bank-network
+    restart: always
+
+  frontend:
+    build: ./client
+    container_name: bank-orchestrator-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - bank-network
+    restart: always
+
+networks:
+  bank-network:
+    driver: bridge
