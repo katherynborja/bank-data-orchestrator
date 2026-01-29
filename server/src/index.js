@@ -6,6 +6,8 @@ const apiRoutes = require('./routes/api');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const path = require('path');
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -23,6 +25,15 @@ app.use('/api', apiRoutes);
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', message: 'Server is running' });
+});
+
+// Serve static files from the Angular build
+const publicPath = path.join(__dirname, '../public');
+app.use(express.static(publicPath));
+
+// Handle SPA routing - serve index.html for any unknown routes
+app.get(/^(?!\/api).*$/, (req, res) => {
+    res.sendFile(path.join(publicPath, 'index.html'));
 });
 
 // Error handling middleware
